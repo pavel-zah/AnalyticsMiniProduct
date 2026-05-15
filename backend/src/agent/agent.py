@@ -1,5 +1,5 @@
-from collections.abc import Callable
 import time
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any, Dict
 
@@ -29,7 +29,7 @@ def get_agent_resources(emit: Callable):
         backend=backend,
         store=InMemoryStore(),
         system_prompt=SYSTEM_PROMPT,
-        tools=[emit],  # ← смотри как deepagent принимает кастомные tools
+        tools=[emit],
         debug=False,
     )
     return deep_agent, sandbox, backend, daytona
@@ -61,13 +61,21 @@ def _emit_chart_image(
     title: str | None,
 ) -> str:
     if not sandbox_path:
-        return emit(type="error", payload="Пустой путь к изображению графика.", title="Ошибка графика")
+        return emit(
+            type="error",
+            payload="Пустой путь к изображению графика.",
+            title="Ошибка графика",
+        )
 
     if not sandbox_path.startswith("/"):
         sandbox_path = f"/home/daytona/{sandbox_path}"
 
-    # repo layout: backend/src/agent/agent.py → parents[3] == backend/
-    artifacts_dir = Path(__file__).resolve().parents[3] / "uploaded_files" / "artifacts" / session_id
+    artifacts_dir = (
+        Path(__file__).resolve().parents[3]
+        / "uploaded_files"
+        / "artifacts"
+        / session_id
+    )
     artifacts_dir.mkdir(parents=True, exist_ok=True)
 
     filename = Path(sandbox_path).name
@@ -92,7 +100,7 @@ def analyze_csv(
     local_csv_path: str,
     sandbox_csv_path: str,
     user_message: str | None,
-    session_id: str,  # ← новый параметр
+    session_id: str,
     emit: Callable,
 ) -> Dict[str, Any]:
     deep_agent = None
@@ -123,8 +131,14 @@ def analyze_csv(
                 is_local_png = payload.lower().endswith(".png")
                 is_sandbox_path = payload.startswith("/home/daytona/")
                 is_backend_url = payload.startswith("/v1/")
-                is_http_url = payload.startswith("http://") or payload.startswith("https://")
-                if (is_local_png or is_sandbox_path) and not is_backend_url and not is_http_url:
+                is_http_url = payload.startswith("http://") or payload.startswith(
+                    "https://"
+                )
+                if (
+                    (is_local_png or is_sandbox_path)
+                    and not is_backend_url
+                    and not is_http_url
+                ):
                     return _emit_chart_image(
                         emit=emit,
                         sandbox=sandbox,
@@ -160,7 +174,11 @@ def analyze_csv(
             except Exception as e:
                 last_error = e
                 error_text = str(e)
-                is_transient = "502" in error_text or "Upstream" in error_text or "Response validation failed" in error_text
+                is_transient = (
+                    "502" in error_text
+                    or "Upstream" in error_text
+                    or "Response validation failed" in error_text
+                )
                 if attempt < 3 and is_transient:
                     time.sleep(2 * attempt)
                     continue
@@ -169,7 +187,6 @@ def analyze_csv(
         if last_error is not None:
             return {"error": f"Ошибка в процессе работы агента: {str(last_error)}"}
 
-        # Архив больше не нужен — всё отправлено через emit
         return {"status": "success"}
 
     except Exception as e:

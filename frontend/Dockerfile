@@ -1,4 +1,3 @@
-# Frontend build stage
 FROM node:18-slim as builder
 
 WORKDIR /app

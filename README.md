@@ -10,7 +10,7 @@
 
 ## Агент и пайплайн
 
-- Для агента используется Deep Agents SDK: A package for building agents that can handle any task (пакет от создателей LangChain).
+- Для агента используется Deep Agents SDK [(пакет от создателей LangChain)](https://docs.langchain.com/oss/python/deepagents/overview).
 - Агент работает по пайплайну, заданному системным промптом (структура анализа и порядок шагов взяты из 1 лабораторной работы):
   1) структура данных и пропуски
   2) тренды/взаимосвязи (корреляции)
@@ -42,11 +42,6 @@
 - REST endpoint для загрузки данных и старта анализа
 - SSE endpoint для потока артефактов в реальном времени
 - endpoint для отдачи файлов-артефактов (PNG графики)
-
-Основные endpoints:
-- `POST /v1/analyse` — загрузка CSV + (опционально) сообщение пользователя
-- `GET /v1/stream/{session_id}` — SSE поток артефактов
-- `GET /v1/artifacts/{session_id}/{filename}` — получить PNG артефакт
 
 Swagger: `http://localhost:5030/docs`
 

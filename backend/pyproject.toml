@@ -1,0 +1,24 @@
+[project]
+name = "analyticsthirdlab"
+version = "0.1.0"
+description = "Analytics Third Lab"
+requires-python = ">=3.12"
+
+dependencies = [
+    "requests",
+    "pandas",
+    "numpy",
+    "scipy",
+    "scikit-learn",
+    "plotly>=5.0.0",
+    "deepagents>=0.6.1",
+    "fastapi>=0.136.1",
+    "uvicorn>=0.46.0",
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.14.1",
+    "slack-sdk>=3.41.0",
+    "langchain-daytona>=0.0.6",
+    "langchain-openrouter>=0.2.3",
+    "markdown>=3.10.2",
+    "jinja2>=3.1.6",
+]
